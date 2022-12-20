@@ -11,5 +11,5 @@ server.use("/authors", authorsRouter);
 
 server.listen(port, () => {
   console.log(listEndpoints(server));
-  console.log("this is the por", port);
+  console.log("this is the port", port);
 });
