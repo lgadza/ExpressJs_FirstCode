@@ -14,12 +14,11 @@ const blogPostSchema = {
       errorMessage: "title is mandatory field and has to be a string",
     },
   },
-  autor: {
-    name: {
-      in: ["body"],
-      isString: {
-        errorMessage: "autor name is mandatory field and has to be a string",
-      },
+
+  name: {
+    in: ["body.author"],
+    isString: {
+      errorMessage: "autor name is mandatory field and has to be a string",
     },
   },
 };

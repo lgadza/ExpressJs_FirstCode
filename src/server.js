@@ -33,9 +33,9 @@ server.use(express.json());
 server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogPostsRouter);
 server.use(badRequestHandler);
-server.use(genericErrorHandler);
 server.use(notFoundHandler);
 server.use(unauthorizedHandler);
+server.use(genericErrorHandler);
 
 server.listen(port, () => {
   console.table(listEndpoints(server));

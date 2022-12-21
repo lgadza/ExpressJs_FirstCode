@@ -4,8 +4,8 @@ import { fileURLToPath } from "url";
 import uniqid from "uniqid";
 import fs from "fs";
 import httpErrors from "http-errors";
-import { title } from "process";
 import { checksBlogPostsSchema, triggerBadRequest } from "./validator.js";
+import createHttpError from "http-errors";
 
 const { NotFound, Unauthorised, BadRequest } = httpErrors;
 
@@ -45,11 +45,12 @@ blogPostsRouter.get("/", (req, res, next) => {
     const blogPostsList = getBlogPosts();
 
     if ((req.query && req.query.title) || (req.query && req.query.category)) {
-      blogPostsList.filter(
+      const filteredBlogPostList = blogPostsList.filter(
         (blogPost) =>
           blogPost.title === req.query.title ||
           blogPost.category === req.query.category
       );
+      res.send(filteredBlogPostList);
     } else {
       res.send(blogPostsList);
     }
@@ -66,6 +67,7 @@ blogPostsRouter.get("/:blogPostId", (req, res, next) => {
     if (foundBlogPost) {
       res.send(foundBlogPost);
     } else {
+      // next(createHttpError(404, `Blog Post with id ${req.params.blogPostId} not found!`))
       next(NotFound(`Blog Post id ${req.params.blogPostId} not found`));
     }
   } catch (error) {
