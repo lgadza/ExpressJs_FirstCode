@@ -2,6 +2,7 @@ import express from "express";
 // import { authorsRouter } from "./api/authors/index.js";
 import authorsRouter from "./api/authors/index.js";
 import listEndpoints from "express-list-endpoints";
+import cors from "cors";
 import blogPostsRouter from "./api/blogPosts/index.js";
 import {
   unauthorizedHandler,
@@ -29,6 +30,7 @@ const policeOfficerMiddleware = (req, res, next) => {
   }
 } */
 server.use(express.json());
+server.use(cors());
 
 server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogPostsRouter);
