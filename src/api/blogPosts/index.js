@@ -5,6 +5,7 @@ import uniqid from "uniqid";
 import fs from "fs";
 import httpErrors from "http-errors";
 import { title } from "process";
+import { checksBlogPostsSchema, triggerBadRequest } from "./validator.js";
 
 const { NotFound, Unauthorised, BadRequest } = httpErrors;
 
@@ -18,29 +19,42 @@ const getBlogPosts = () => JSON.parse(fs.readFileSync(blogPostsJSONPath));
 const writeBlogPosts = (blogPostsList) =>
   fs.writeFileSync(blogPostsJSONPath, JSON.stringify(blogPostsList));
 
-blogPostsRouter.post("/", (req, res, next) => {
-  console.log(req.body);
-  const newBlogPost = {
-    ...req.body,
-    createdAt: new Date(),
-    _id: uniqid(),
-  };
-  const blogPostsList = getBlogPosts();
-  blogPostsList.push(newBlogPost);
-  writeBlogPosts(blogPostsList);
-  res.status(201).send({ _id: newBlogPost._id });
-});
+blogPostsRouter.post(
+  "/",
+  checksBlogPostsSchema,
+  triggerBadRequest,
+  (req, res, next) => {
+    try {
+      console.log(req.body);
+      const newBlogPost = {
+        ...req.body,
+        createdAt: new Date(),
+        _id: uniqid(),
+      };
+      const blogPostsList = getBlogPosts();
+      blogPostsList.push(newBlogPost);
+      writeBlogPosts(blogPostsList);
+      res.status(201).send({ _id: newBlogPost._id });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 blogPostsRouter.get("/", (req, res, next) => {
-  const blogPostsList = getBlogPosts();
+  try {
+    const blogPostsList = getBlogPosts();
 
-  if ((req.query && req.query.title) || req.query.category) {
-    blogPostsList.filter(
-      (blogPost) =>
-        blogPost.title === req.query.title ||
-        blogPost.category === req.query.category
-    );
-  } else {
-    res.send(blogPostsList);
+    if ((req.query && req.query.title) || (req.query && req.query.category)) {
+      blogPostsList.filter(
+        (blogPost) =>
+          blogPost.title === req.query.title ||
+          blogPost.category === req.query.category
+      );
+    } else {
+      res.send(blogPostsList);
+    }
+  } catch (error) {
+    next(error);
   }
 });
 blogPostsRouter.get("/:blogPostId", (req, res, next) => {
