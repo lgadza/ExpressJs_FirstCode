@@ -10,6 +10,6 @@ server.use(express.json());
 server.use("/authors", authorsRouter);
 
 server.listen(port, () => {
-  console.log(listEndpoints(server));
+  console.table(listEndpoints(server));
   console.log("this is the port", port);
 });

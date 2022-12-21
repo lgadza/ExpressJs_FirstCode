@@ -18,7 +18,7 @@ authorsRouter.post("/", (req, res) => {
     createdAt: new Date(),
     updatedAt: new Date(),
     id: uniqid(),
-    avatar: `url("e.g. https://ui-avatars.com/api/?name=John+Doe")`,
+    avatar: `https://ui-avatars.com/api/?name=${req.body.name}`,
   };
   const authorsList = JSON.parse(fs.readFileSync(authorsJSONPath));
   authorsList.push(newAuthor);
