@@ -9,6 +9,7 @@ const authorsJSONPath = join(
   dirname(fileURLToPath(import.meta.url)),
   "authors.json"
 );
+console.log("New****************", authorsJSONPath);
 
 const authorsRouter = express.Router();
 
@@ -19,7 +20,7 @@ authorsRouter.post("/", (req, res) => {
     createdAt: new Date(),
     updatedAt: new Date(),
     id: uniqid(),
-    avatar: `https://ui-avatars.com/api/?name=${req.body.name}`,
+    // avatar: `https://ui-avatars.com/api/?name=${req.body.name}`,
   };
   const authorsList = JSON.parse(fs.readFileSync(authorsJSONPath));
   authorsList.push(newAuthor);

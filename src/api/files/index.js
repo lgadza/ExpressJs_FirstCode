@@ -15,22 +15,25 @@ filesRouter.post(
   async (req, res, next) => {
     try {
       const originalFileExtension = extname(req.file.originalname);
-      const fileName = req.params.userId + originalFileExtension;
+      const fileName = req.params.authorId + originalFileExtension;
 
       await saveAuthorsAvatars(fileName, req.file.buffer);
 
-      const url = `http://localhost:3001/img/authors/${fileName}`;
+      const url = `http://localhost:3001/img/blogPosts/${fileName}`;
 
       const authors = await getAuthors();
+      console.log("we are the users", authors);
 
-      const index = authors.findIndex((user) => user.id === req.params.userId);
+      const index = authors.findIndex(
+        (author) => author.id === req.params.authorId
+      );
       if (index !== -1) {
         const oldAuthor = authors[index];
 
         const author = { ...oldAuthor.author, avatar: url };
         const updatedAuthor = { ...oldAuthor, author, updatedAt: new Date() };
 
-        authors[index] = updatedUser;
+        authors[index] = updatedAuthor;
 
         await writeAuthors(authors);
       }
@@ -59,5 +62,38 @@ filesRouter.post(
     }
   }
 );
+filesRouter.post(
+  "/:authorId/uploadCover",
+  multer().single("postCover"),
+  async (req, res, next) => {
+    try {
+      const originalFileExtension = extname(req.file.originalname);
+      const fileName = req.params.authorId + originalFileExtension;
 
+      await saveAuthorsAvatars(fileName, req.file.buffer);
+
+      const url = `http://localhost:3001/img/authors/${fileName}`;
+
+      const authors = await getAuthors();
+
+      const index = authors.findIndex(
+        (author) => author.id === req.params.authorId
+      );
+      if (index !== -1) {
+        const oldAuthor = authors[index];
+
+        const author = { ...oldAuthor.author, avatar: url };
+        const updatedAuthor = { ...oldAuthor, author, updatedAt: new Date() };
+
+        authors[index] = updatedAuthor;
+
+        await writeAuthors(authors);
+      }
+
+      res.send("File uploaded");
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 export default filesRouter;

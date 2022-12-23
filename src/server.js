@@ -1,4 +1,5 @@
 import express from "express";
+import { join } from "path";
 // import { authorsRouter } from "./api/authors/index.js";
 import authorsRouter from "./api/authors/index.js";
 import listEndpoints from "express-list-endpoints";
@@ -13,10 +14,17 @@ import {
 } from "./api/errorHandler.js";
 const server = express();
 const port = 3001;
-
+const publicFolderPath = join(process.cwd(), "./public");
 server.use(express.json());
 server.use(cors());
-
+const loggerMiddleware = (req, res, next) => {
+  console.log(
+    `Request method ${req.method} -- url ${req.url} -- ${new Date()}`
+  );
+  req.user = "Author";
+  next();
+};
+server.use(express.static(publicFolderPath));
 server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogPostsRouter);
 server.use("/authors", filesRouter);
