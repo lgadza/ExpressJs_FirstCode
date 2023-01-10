@@ -6,8 +6,18 @@ import {
   getAuthors,
   writeAuthors,
 } from "../../lib/fs-tools.js";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 const filesRouter = express.Router();
+const cloudinaryUploader = multer({
+  storage: new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: "img/covers",
+    },
+  }),
+}).single("avatar");
 
 filesRouter.post(
   "/:authorId/uploadAvatar",

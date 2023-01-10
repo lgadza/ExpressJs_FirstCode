@@ -1,1 +1,23 @@
-[{"name":"Gadza","username":"Louis","DOB":"11/32/2313","emai":"loiwe@sqdwjhdb.gmail.com","createdAt":"2022-12-22T13:29:05.298Z","updatedAt":"2022-12-22T13:29:05.299Z","id":"1ffglx8pglbz4e4gk"},{"name":"Gadza","username":"Louis","DOB":"11/32/2313","emai":"loiwe@sqdwjhdb.gmail.com","createdAt":"2022-12-22T13:51:51.805Z","updatedAt":"2022-12-22T14:03:44.705Z","id":"1ffglx4pklbz57ev2","author":{"avatar":"http://localhost:3001/img/blogPosts/1ffglx4pklbz57ev2.JPG"}}]
+[
+  {
+    "name": "Gadza",
+    "username": "Louis",
+    "DOB": "11/32/2313",
+    "emai": "loiwe@sqdwjhdb.gmail.com",
+    "createdAt": "2022-12-22T13:29:05.298Z",
+    "updatedAt": "2022-12-22T13:29:05.299Z",
+    "id": "1ffglx8pglbz4e4gk"
+  },
+  {
+    "name": "Gadza",
+    "username": "Louis",
+    "DOB": "11/32/2313",
+    "emai": "loiwe@sqdwjhdb.gmail.com",
+    "createdAt": "2022-12-22T13:51:51.805Z",
+    "updatedAt": "2022-12-22T14:03:44.705Z",
+    "id": "1ffglx4pklbz57ev2",
+    "author": {
+      "avatar": "http://localhost:3001/img/blogPosts/1ffglx4pklbz57ev2.JPG"
+    }
+  }
+]
