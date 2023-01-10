@@ -6,6 +6,7 @@ import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import filesRouter from "./api/files/index.js";
 import blogPostsRouter from "./api/blogPosts/index.js";
+import createHttpError from "http-errors";
 import {
   unauthorizedHandler,
   notFoundHandler,
@@ -13,7 +14,8 @@ import {
   genericErrorHandler,
 } from "./api/errorHandler.js";
 const server = express();
-const port = 3001;
+// const port = 3001;
+const port = process.env.PORT;
 const publicFolderPath = join(process.cwd(), "./public");
 server.use(express.json());
 server.use(cors());
@@ -24,6 +26,21 @@ const loggerMiddleware = (req, res, next) => {
   req.user = "Author";
   next();
 };
+const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
+
+const corsOpts = {
+  origin: (origin, corsNext) => {
+    console.log("CURRENT ORIGIN: ", origin);
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      corsNext(null, true);
+    } else {
+      corsNext(
+        createHttpError(400, `Origin ${origin} is not in the whitelist!`)
+      );
+    }
+  },
+};
+server.use(cors(corsOpts));
 server.use(express.static(publicFolderPath));
 server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogPostsRouter);
