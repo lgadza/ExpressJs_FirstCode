@@ -8,6 +8,10 @@ import {
 } from "../../lib/fs-tools.js";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { getBooksJSONReadableStream } from "../../lib/fs-tools.js";
+import { pipeline } from "stream";
+import { createGzip } from "zlib";
+import { getPDFReadableStream } from "../../lib/pdf-tools.js";
 
 const filesRouter = express.Router();
 const cloudinaryUploader = multer({
@@ -22,6 +26,7 @@ const cloudinaryUploader = multer({
 filesRouter.post(
   "/:authorId/uploadAvatar",
   multer().single("avatar"),
+  multer().array("avatar"),
   async (req, res, next) => {
     try {
       const originalFileExtension = extname(req.file.originalname);
@@ -72,6 +77,7 @@ filesRouter.post(
     }
   }
 );
+
 filesRouter.post(
   "/:authorId/uploadCover",
   multer().single("postCover"),
@@ -106,4 +112,33 @@ filesRouter.post(
     }
   }
 );
+filesRouter.get("/pdf", (req, res, next) => {
+  try {
+    res.setHeader("Content-Disposition", "attachment; filename=blogpost.pdf");
+    const source = getPDFReadableStream([
+      {
+        asin: "0345546792",
+        title: "The Silent Corner: A Novel of Suspense (Jane Hawk)",
+        img: "https://images-na.ssl-images-amazon.com/images/I/91dDIYze1wL.jpg",
+        price: 7.92,
+        category: "horror",
+      },
+      {
+        asin: "0735218994",
+        title: "Celtic Empire (Dirk Pitt Adventure)",
+        img: "https://images-na.ssl-images-amazon.com/images/I/91xI4GjM7jL.jpg",
+        price: 17.32,
+        category: "horror",
+      },
+    ]);
+    const destination = res;
+    const transform = createGzip();
+    pipeline(source, transform, destination, (err) => {
+      if (err) console.log(err);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default filesRouter;

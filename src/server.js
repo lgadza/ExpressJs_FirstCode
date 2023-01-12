@@ -15,7 +15,7 @@ import {
 } from "./api/errorHandler.js";
 const server = express();
 // const port = 3001;
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 const publicFolderPath = join(process.cwd(), "./public");
 server.use(express.json());
 server.use(cors());
