@@ -25,5 +25,5 @@ export const unauthorizedHandler = (err, req, res, next) => {
 export const genericErrorHandler = (err, req, res, next) => {
   console.log("generic error", err);
 
-  res.status(500).send({ message: err.message });
+  res.status(500).send({ message: "The problem is on our end" });
 };

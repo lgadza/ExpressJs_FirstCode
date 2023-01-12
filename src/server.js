@@ -7,6 +7,8 @@ import cors from "cors";
 import filesRouter from "./api/files/index.js";
 import blogPostsRouter from "./api/blogPosts/index.js";
 import createHttpError from "http-errors";
+import swagger from "swagger-ui-express";
+import yaml from "yamljs";
 import {
   unauthorizedHandler,
   notFoundHandler,
@@ -27,6 +29,7 @@ const loggerMiddleware = (req, res, next) => {
   next();
 };
 const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
+const yamlFile = yaml.load(join(process.cwd(), "./src/docs/apiDocs.yml"));
 
 const corsOpts = {
   origin: (origin, corsNext) => {
@@ -42,13 +45,15 @@ const corsOpts = {
 };
 server.use(cors(corsOpts));
 server.use(express.static(publicFolderPath));
+server.use("/authors", filesRouter);
 server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogPostsRouter);
-server.use("/authors", filesRouter);
+
 server.use(badRequestHandler);
 server.use(notFoundHandler);
 server.use(unauthorizedHandler);
 server.use(genericErrorHandler);
+server.use("/docs", swagger.serve, swagger.setup(yamlFile));
 
 server.listen(port, () => {
   console.table(listEndpoints(server));

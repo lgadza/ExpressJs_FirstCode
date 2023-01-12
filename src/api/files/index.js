@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { extname } from "path";
+import json2csv from "json2csv";
 import {
   saveAuthorsAvatars,
   getAuthors,
@@ -8,10 +9,13 @@ import {
 } from "../../lib/fs-tools.js";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { getBooksJSONReadableStream } from "../../lib/fs-tools.js";
+import { getPostJSONReadableStream } from "../../lib/fs-tools.js";
 import { pipeline } from "stream";
 import { createGzip } from "zlib";
-import { getPDFReadableStream } from "../../lib/pdf-tools.js";
+import {
+  asyncPDFGeneration,
+  getPDFReadableStream,
+} from "../../lib/pdf-tools.js";
 
 const filesRouter = express.Router();
 const cloudinaryUploader = multer({
@@ -113,6 +117,7 @@ filesRouter.post(
   }
 );
 filesRouter.get("/pdf", (req, res, next) => {
+  console.log("firing");
   try {
     res.setHeader("Content-Disposition", "attachment; filename=blogpost.pdf");
     const source = getPDFReadableStream([
@@ -132,10 +137,37 @@ filesRouter.get("/pdf", (req, res, next) => {
       },
     ]);
     const destination = res;
-    const transform = createGzip();
+    pipeline(source, destination, (err) => {
+      if (err) console.log(err);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+filesRouter.get("/postCSV", (req, res, next) => {
+  try {
+    res.setHeader("Content-Disposition", "attachment; filename=authors.csv");
+
+    const source = getPostJSONReadableStream();
+    const transform = new json2csv.Transform({
+      fields: ["name", "username"],
+    });
+    const destination = res;
     pipeline(source, transform, destination, (err) => {
       if (err) console.log(err);
     });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+filesRouter.get("/asyncPDF", async (req, res, next) => {
+  try {
+    const authors = await getAuthors();
+    await asyncPDFGeneration(authors);
+    res.send();
   } catch (error) {
     next(error);
   }

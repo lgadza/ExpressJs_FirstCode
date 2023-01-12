@@ -10,15 +10,16 @@ const publicFolderPath = join(process.cwd(), "./public/img/authors");
 console.log("ROOT OF THE PROJECT:", process.cwd());
 console.log("PUBLIC FOLDER:", publicFolderPath);
 
-console.log("DATA FOLDER PATH: ", dataFolderPath);
 const authorsJSONPath = join(dataFolderPath, "authors.json");
+console.log("autors FOLDER PATH: ", authorsJSONPath);
 
 export const getAuthors = () => readJSON(authorsJSONPath);
 export const writeAuthors = (authorList) =>
   writeJSON(authorsJSONPath, authorList);
-// export const getBooks = () => readJSON(booksJSONPath);
-// export const writeBooks = (booksArray) => writeJSON(booksJSONPath, booksArray);
 
 export const saveAuthorsAvatars = (fileName, contentAsABuffer) =>
   writeFile(join(publicFolderPath, fileName), contentAsABuffer);
-export const getBooksJSONReadableStream = () => createReadStream(booksJSONPath);
+export const getPostJSONReadableStream = () =>
+  createReadStream(authorsJSONPath);
+export const getPDFWritableStream = (filename) =>
+  createReadStream(join(dataFolderPath, filename));
